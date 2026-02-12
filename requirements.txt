@@ -2,8 +2,9 @@
 streamlit>=1.31.0
 
 # OCR Engine
-paddleocr>=2.7.0
-paddlepaddle>=2.5.0
+# PaddlePaddle 3.x は PIR + oneDNN の互換性問題があるため 2.x 系に固定
+paddleocr>=2.7.0,<3.0.0
+paddlepaddle>=2.5.0,<3.0.0
 
 # Image Processing
 Pillow>=10.2.0

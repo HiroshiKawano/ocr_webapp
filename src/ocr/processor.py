@@ -17,13 +17,8 @@ from pathlib import Path
 from typing import Union
 
 import numpy as np
-import paddle
 from paddleocr import PaddleOCR
 from PIL import Image, ImageOps
-
-# PaddlePaddle 3.x の PIR + oneDNN 互換性問題を回避
-# CPU環境で ConvertPirAttribute2RuntimeAttribute エラーを防止
-paddle.set_flags({"FLAGS_enable_pir_api": 0, "FLAGS_use_mkldnn": 0})
 
 # 相対インポートを使用（Streamlit Cloud互換性のため）
 from ..validators import FileValidator, ValidationError
@@ -81,10 +76,18 @@ class OCRProcessor:
                 デフォルトは DEFAULT_PADDING_SIZE。各辺に指定サイズの
                 白い余白を追加する。
         """
-        self._engine = PaddleOCR(
-            use_textline_orientation=True,
-            lang=lang,
-        )
+        try:
+            # PaddleOCR 3.x（PP-OCRv5）: テキスト行方向検出を使用
+            self._engine = PaddleOCR(
+                use_textline_orientation=True,
+                lang=lang,
+            )
+        except TypeError:
+            # PaddleOCR 2.x: use_textline_orientation 未対応
+            self._engine = PaddleOCR(
+                use_angle_cls=True,
+                lang=lang,
+            )
 
         self._add_padding = add_padding
         self._padding_size = padding_size
