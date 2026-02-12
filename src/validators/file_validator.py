@@ -12,7 +12,6 @@
 
 from __future__ import annotations
 
-import imghdr
 import io
 import logging
 from dataclasses import dataclass, field
@@ -38,6 +37,41 @@ _EXTENSION_TO_IMGHDR: dict[str, set[str]] = {
     ".tiff": {"tiff"},
     ".tif": {"tiff"},
 }
+
+def _detect_image_type_from_path(file_path: Union[str, Path]) -> str | None:
+    """ファイルパスから画像タイプを検出する（imghdrの代替）
+
+    Python 3.13で削除された imghdr.what() の代替として、
+    PIL を使用して画像形式を判定する。
+
+    Returns:
+        検出された形式名（小文字）。検出できない場合は None。
+    """
+    try:
+        with Image.open(file_path) as img:
+            fmt = img.format
+            return fmt.lower() if fmt else None
+    except Exception:
+        return None
+
+
+def _detect_image_type_from_bytes(data: bytes) -> str | None:
+    """バイナリデータから画像タイプを検出する（imghdrの代替）
+
+    Python 3.13で削除された imghdr.what(None, h=data) の代替として、
+    PIL を使用して画像形式を判定する。
+
+    Returns:
+        検出された形式名（小文字）。検出できない場合は None。
+    """
+    try:
+        img = Image.open(io.BytesIO(data))
+        fmt = img.format
+        img.close()
+        return fmt.lower() if fmt else None
+    except Exception:
+        return None
+
 
 # imghdrの形式名から拡張子への逆マッピング
 _IMGHDR_TO_EXTENSIONS: dict[str, set[str]] = {
@@ -280,7 +314,7 @@ class FileValidator:
             )
 
         # 画像形式チェック
-        detected_type = imghdr.what(None, h=data)
+        detected_type = _detect_image_type_from_bytes(data)
         if detected_type is None:
             raise FileFormatError(
                 "不正なファイル形式です: 画像として認識できないデータです"
@@ -388,7 +422,7 @@ class FileValidator:
         Raises:
             FileFormatError: MIMEタイプと拡張子が一致しない場合
         """
-        detected_type = imghdr.what(str(file_path))
+        detected_type = _detect_image_type_from_path(file_path)
 
         if detected_type is None:
             raise FileFormatError(

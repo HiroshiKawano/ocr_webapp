@@ -972,10 +972,14 @@ class TestImageOpenFailure:
             v.validate_file_path(corrupted_file)
 
     def test_image_open_with_mock_exception(self, base_dir: Path):
-        """Image.openが例外を送出する場合 ValidationError を送出する"""
+        """Image.openが例外を送出する場合 ValidationError を送出する
+
+        PIL ベースの画像タイプ検出でも Image.open を使用するため、
+        モック時は型検出が先に失敗し FileFormatError が発生する。
+        """
         v = FileValidator(allowed_base_dir=base_dir)
         img_file = _create_temp_image_file(base_dir, "mock_fail.png")
         with patch("src.validators.file_validator.Image.open") as mock_open:
             mock_open.side_effect = OSError("ファイルを読み込めません")
-            with pytest.raises(ValidationError, match="画像ファイルを開けません"):
+            with pytest.raises(ValidationError, match="不正なファイル形式です"):
                 v.validate_file_path(img_file)
