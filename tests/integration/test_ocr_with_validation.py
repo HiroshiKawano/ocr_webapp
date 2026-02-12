@@ -661,6 +661,13 @@ class TestPaddingIntegration:
         assert "テスト文字列" in result
 
 
+_TEST1_JPG_PATH = Path(__file__).parent.parent.parent / "test_img" / "test1.jpg"
+
+
+@pytest.mark.skipif(
+    not _TEST1_JPG_PATH.exists(),
+    reason="テスト画像 test_img/test1.jpg が存在しません",
+)
 class TestTest1JpgRegression:
     """test1.jpg の回帰テスト
 
