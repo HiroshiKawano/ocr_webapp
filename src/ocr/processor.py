@@ -77,15 +77,21 @@ class OCRProcessor:
                 白い余白を追加する。
         """
         try:
-            # PaddleOCR 3.x（PP-OCRv5）: テキスト行方向検出を使用
-            # enable_mkldnn=False: oneDNN無効化（PIR互換性問題を回避）
+            # PaddleOCR 3.x（PP-OCRv5）:
+            # - use_textline_orientation: テキスト行方向検出を使用
+            # - use_doc_orientation_classify=False: 文書方向分類モデルを無効化（不要）
+            # - use_doc_unwarping=False: 文書歪み補正モデルを無効化（不要）
+            # - enable_mkldnn=False: oneDNN無効化（PIR互換性問題を回避）
+            # これにより読み込むモデル数を5→3に削減し、起動時間とメモリを節約
             self._engine = PaddleOCR(
                 use_textline_orientation=True,
+                use_doc_orientation_classify=False,
+                use_doc_unwarping=False,
                 lang=lang,
                 enable_mkldnn=False,
             )
         except TypeError:
-            # PaddleOCR 2.x: use_textline_orientation 未対応
+            # PaddleOCR 2.x: 新パラメータ未対応
             self._engine = PaddleOCR(
                 use_angle_cls=True,
                 lang=lang,

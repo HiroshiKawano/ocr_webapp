@@ -223,6 +223,16 @@ def render_processing_history() -> None:
             st.write(f"- {filename}: エラー ({timestamp}) - {error_msg}")
 
 
+@st.cache_resource
+def get_ocr_processor() -> OCRProcessor:
+    """OCRProcessorをキャッシュして返す
+
+    Streamlit の cache_resource により、アプリの再実行時に
+    PaddleOCR エンジンの重い初期化を繰り返さない。
+    """
+    return OCRProcessor()
+
+
 def main() -> None:
     """アプリケーションのメインエントリポイント"""
     # ページ設定
@@ -235,8 +245,8 @@ def main() -> None:
     # セッション状態初期化
     initialize_session_state()
 
-    # OCRプロセッサの初期化
-    processor = OCRProcessor()
+    # OCRプロセッサの初期化（キャッシュ済み）
+    processor = get_ocr_processor()
 
     # ヘッダー描画
     render_header()
