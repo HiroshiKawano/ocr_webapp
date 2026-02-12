@@ -16,8 +16,11 @@ FileValidator によるセキュアな入力検証を統合している。
     processor = OCRProcessor(validator=validator)
 """
 
-from src.ocr.processor import OCRProcessingError, OCRProcessor
-from src.validators import (
+from .processor import OCRProcessingError, OCRProcessor
+
+# validators モジュールから例外クラスを再エクスポート（後方互換性のため）
+# 注: 相対インポートを使用してStreamlit Cloud互換性を確保
+from ..validators import (
     FileFormatError,
     FileSizeError,
     ImageDimensionsError,
@@ -34,3 +37,4 @@ __all__ = [
     "FileFormatError",
     "ImageDimensionsError",
 ]
+

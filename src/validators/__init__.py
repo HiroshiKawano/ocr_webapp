@@ -16,7 +16,7 @@
         print(result.file_info)
 """
 
-from src.validators.file_validator import (
+from .file_validator import (
     FileFormatError,
     FileSizeError,
     FileValidator,
