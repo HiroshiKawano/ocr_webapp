@@ -103,7 +103,7 @@ def processor_with_validator(base_dir: Path):
         max_file_size=10 * 1024 * 1024,
         max_dimensions=(10000, 10000),
     )
-    with patch("src.ocr.processor.PaddleOCR") as mock_cls:
+    with patch("paddleocr.PaddleOCR") as mock_cls:
         mock_instance = MagicMock()
         mock_cls.return_value = mock_instance
         proc = OCRProcessor(lang="japan", validator=validator)
@@ -113,7 +113,7 @@ def processor_with_validator(base_dir: Path):
 @pytest.fixture
 def processor_default():
     """デフォルト設定のOCRProcessorインスタンスを返す（validator=None相当）"""
-    with patch("src.ocr.processor.PaddleOCR") as mock_cls:
+    with patch("paddleocr.PaddleOCR") as mock_cls:
         mock_instance = MagicMock()
         mock_cls.return_value = mock_instance
         proc = OCRProcessor(lang="japan")
@@ -129,7 +129,7 @@ def processor_strict():
         max_dimensions=(500, 500),
         allowed_base_dir=None,
     )
-    with patch("src.ocr.processor.PaddleOCR") as mock_cls:
+    with patch("paddleocr.PaddleOCR") as mock_cls:
         mock_instance = MagicMock()
         mock_cls.return_value = mock_instance
         proc = OCRProcessor(lang="japan", validator=strict_validator)
@@ -285,7 +285,7 @@ class TestValidationFailureIntegration:
             allowed_base_dir=base_dir,
             max_dimensions=(50, 50),
         )
-        with patch("src.ocr.processor.PaddleOCR") as mock_cls:
+        with patch("paddleocr.PaddleOCR") as mock_cls:
             mock_instance = MagicMock()
             mock_cls.return_value = mock_instance
             proc = OCRProcessor(lang="japan", validator=validator)

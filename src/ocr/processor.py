@@ -17,8 +17,10 @@ from pathlib import Path
 from typing import Union
 
 import numpy as np
-from paddleocr import PaddleOCR
 from PIL import Image, ImageOps
+
+# PaddleOCR は OCRProcessor.__init__ 内で遅延インポートする
+# （モジュールインポート時のモデル初期化を防ぎ、Streamlit Cloudの起動を高速化）
 
 # 相対インポートを使用（Streamlit Cloud互換性のため）
 from ..validators import FileValidator, ValidationError
@@ -76,6 +78,9 @@ class OCRProcessor:
                 デフォルトは DEFAULT_PADDING_SIZE。各辺に指定サイズの
                 白い余白を追加する。
         """
+        # PaddleOCR を遅延インポート（モジュール読み込み時のモデル初期化を回避）
+        from paddleocr import PaddleOCR
+
         try:
             # PaddleOCR 3.x（PP-OCRv5）:
             # - use_textline_orientation: テキスト行方向検出を使用

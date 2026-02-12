@@ -76,7 +76,7 @@ def processor():
     OCRProcessor単体の動作テストに集中するため。
     パディングはデフォルト無効（パディングのテストは専用クラスで行う）。
     """
-    with patch("src.ocr.processor.PaddleOCR") as mock_cls:
+    with patch("paddleocr.PaddleOCR") as mock_cls:
         mock_instance = MagicMock()
         mock_cls.return_value = mock_instance
         proc = OCRProcessor(lang="japan", add_padding=False)
@@ -94,7 +94,7 @@ class TestOCRProcessorInit:
 
     def test_デフォルトで日本語モデルを使用する(self):
         """PaddleOCR が日本語設定で初期化されることを確認"""
-        with patch("src.ocr.processor.PaddleOCR") as mock_cls:
+        with patch("paddleocr.PaddleOCR") as mock_cls:
             OCRProcessor()
             mock_cls.assert_called_once()
             call_kwargs = mock_cls.call_args[1]
@@ -102,7 +102,7 @@ class TestOCRProcessorInit:
 
     def test_言語を指定して初期化できる(self):
         """明示的に言語を指定できることを確認"""
-        with patch("src.ocr.processor.PaddleOCR") as mock_cls:
+        with patch("paddleocr.PaddleOCR") as mock_cls:
             OCRProcessor(lang="en")
             call_kwargs = mock_cls.call_args[1]
             assert call_kwargs["lang"] == "en"
@@ -686,25 +686,25 @@ class TestOCRProcessorPadding:
 
     def test_デフォルトでパディングが有効(self):
         """OCRProcessor のデフォルト設定でパディングが有効であることを確認"""
-        with patch("src.ocr.processor.PaddleOCR"):
+        with patch("paddleocr.PaddleOCR"):
             proc = OCRProcessor()
             assert proc._add_padding is True
 
     def test_パディングを無効化できる(self):
         """add_padding=False でパディングを無効化できることを確認"""
-        with patch("src.ocr.processor.PaddleOCR"):
+        with patch("paddleocr.PaddleOCR"):
             proc = OCRProcessor(add_padding=False)
             assert proc._add_padding is False
 
     def test_パディングサイズを指定できる(self):
         """padding_size でパディングサイズを指定できることを確認"""
-        with patch("src.ocr.processor.PaddleOCR"):
+        with patch("paddleocr.PaddleOCR"):
             proc = OCRProcessor(padding_size=50)
             assert proc._padding_size == 50
 
     def test_デフォルトパディングサイズ(self):
         """デフォルトのパディングサイズが適切に設定されていることを確認"""
-        with patch("src.ocr.processor.PaddleOCR"):
+        with patch("paddleocr.PaddleOCR"):
             proc = OCRProcessor()
             assert proc._padding_size > 0
 
@@ -775,7 +775,7 @@ class TestOCRProcessorPadding:
 
     def test_パディング後の画像サイズが正しい(self):
         """パディング後の画像サイズが元サイズ + 2 * padding_size になる"""
-        with patch("src.ocr.processor.PaddleOCR"):
+        with patch("paddleocr.PaddleOCR"):
             proc = OCRProcessor(padding_size=30)
             proc._validator = MagicMock()
             proc._validator.validate.return_value = _VALID_RESULT
@@ -787,7 +787,7 @@ class TestOCRProcessorPadding:
 
     def test_パディングは白色で埋められる(self):
         """パディング領域が白色（255, 255, 255）で埋められることを確認"""
-        with patch("src.ocr.processor.PaddleOCR"):
+        with patch("paddleocr.PaddleOCR"):
             proc = OCRProcessor(padding_size=10)
             proc._validator = MagicMock()
             proc._validator.validate.return_value = _VALID_RESULT
@@ -804,7 +804,7 @@ class TestOCRProcessorPadding:
 
     def test_グレースケール画像にもパディングが適用される(self):
         """グレースケール（L モード）画像にもパディングが正しく適用される"""
-        with patch("src.ocr.processor.PaddleOCR"):
+        with patch("paddleocr.PaddleOCR"):
             proc = OCRProcessor(padding_size=10)
             proc._validator = MagicMock()
             proc._validator.validate.return_value = _VALID_RESULT
@@ -818,7 +818,7 @@ class TestOCRProcessorPadding:
 
     def test_RGBA画像にもパディングが適用される(self):
         """RGBA 画像にもパディングが正しく適用される"""
-        with patch("src.ocr.processor.PaddleOCR"):
+        with patch("paddleocr.PaddleOCR"):
             proc = OCRProcessor(padding_size=10)
             proc._validator = MagicMock()
             proc._validator.validate.return_value = _VALID_RESULT
