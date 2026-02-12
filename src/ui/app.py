@@ -17,9 +17,10 @@ from datetime import datetime
 
 import streamlit as st
 
-# 相対インポートを使用（Streamlit Cloud互換性のため）
-from ..ocr.processor import OCRProcessor, OCRProcessingError
-from ..validators.file_validator import (
+# app.pyはStreamlitのエントリーポイントとして直接実行されるため、
+# 絶対インポートを使用する必要がある（上記のsys.path設定により動作）
+from src.ocr.processor import OCRProcessor, OCRProcessingError
+from src.validators.file_validator import (
     FileFormatError,
     FileSizeError,
     PathTraversalError,
