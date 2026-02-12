@@ -83,13 +83,14 @@ class OCRProcessor:
 
         try:
             # PaddleOCR 3.x（PP-OCRv5）:
-            # - use_textline_orientation: テキスト行方向検出を使用
-            # - use_doc_orientation_classify=False: 文書方向分類モデルを無効化（不要）
-            # - use_doc_unwarping=False: 文書歪み補正モデルを無効化（不要）
+            # - use_textline_orientation=False: テキスト行方向モデルを省略（メモリ節約）
+            # - use_doc_orientation_classify=False: 文書方向分類モデルを無効化
+            # - use_doc_unwarping=False: 文書歪み補正モデルを無効化
             # - enable_mkldnn=False: oneDNN無効化（PIR互換性問題を回避）
-            # これにより読み込むモデル数を5→3に削減し、起動時間とメモリを節約
+            # これにより読み込むモデル数を5→2に削減し、メモリ消費を最小化
+            # （Streamlit Cloud無料枠の~1GBメモリ制限に対応）
             self._engine = PaddleOCR(
-                use_textline_orientation=True,
+                use_textline_orientation=False,
                 use_doc_orientation_classify=False,
                 use_doc_unwarping=False,
                 lang=lang,
