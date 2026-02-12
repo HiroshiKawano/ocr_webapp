@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import os
 import sys
+import traceback
 from pathlib import Path
 
 # PaddlePaddle 3.x の PIR + oneDNN 互換性問題を回避（Paddle importより前に設定必須）
@@ -21,14 +22,20 @@ os.environ["FLAGS_use_onednn"] = "0"       # PaddlePaddle 3.x 系の新フラグ
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from datetime import datetime
-
 import streamlit as st
 
-# app.pyはStreamlitのエントリーポイントとして直接実行されるため、
-# 絶対インポートを使用する必要がある（上記のsys.path設定により動作）
-_IMPORT_ERROR: str | None = None
+# ページ設定を最初に実行（これによりエラー時もページが表示される）
+st.set_page_config(
+    page_title="OCR画像テキスト抽出",
+    page_icon="",
+    layout="centered",
+)
+
+# プロジェクトモジュールのインポート（エラー時はUI上に詳細表示）
+_IMPORT_ERROR = None
 try:
+    from datetime import datetime
+
     from src.ocr.processor import OCRProcessor, OCRProcessingError
     from src.validators.file_validator import (
         FileFormatError,
@@ -36,8 +43,8 @@ try:
         PathTraversalError,
         ValidationError,
     )
-except Exception as e:
-    _IMPORT_ERROR = f"{type(e).__name__}: {e}"
+except Exception:
+    _IMPORT_ERROR = traceback.format_exc()
 
 
 def initialize_session_state() -> None:
@@ -239,16 +246,10 @@ def get_ocr_processor() -> OCRProcessor:
 
 def main() -> None:
     """アプリケーションのメインエントリポイント"""
-    # ページ設定
-    st.set_page_config(
-        page_title="OCR画像テキスト抽出",
-        page_icon="",
-        layout="centered",
-    )
-
     # インポートエラーがある場合は表示して停止
     if _IMPORT_ERROR:
-        st.error(f"モジュールの読み込みに失敗しました:\n\n`{_IMPORT_ERROR}`")
+        st.error("モジュールの読み込みに失敗しました:")
+        st.code(_IMPORT_ERROR)
         st.stop()
 
     # セッション状態初期化
@@ -281,5 +282,5 @@ def main() -> None:
     render_processing_history()
 
 
-if __name__ == "__main__":
-    main()
+# Streamlit はスクリプトを直接実行するため、main()を直接呼び出す
+main()
