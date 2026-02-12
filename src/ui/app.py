@@ -245,9 +245,6 @@ def main() -> None:
     # セッション状態初期化
     initialize_session_state()
 
-    # OCRプロセッサの初期化（キャッシュ済み）
-    processor = get_ocr_processor()
-
     # ヘッダー描画
     render_header()
 
@@ -255,10 +252,13 @@ def main() -> None:
     uploaded_files = render_file_uploader()
 
     # OCR実行ボタン
+    # OCRプロセッサの初期化はボタン押下時まで遅延させる
+    # （Streamlit Cloudのヘルスチェックタイムアウトを回避するため）
     if render_ocr_button():
         if not uploaded_files:
             st.error("画像ファイルをアップロードしてください。")
         else:
+            processor = get_ocr_processor()
             with st.spinner("OCR処理中..."):
                 process_uploaded_files(processor, uploaded_files)
 
