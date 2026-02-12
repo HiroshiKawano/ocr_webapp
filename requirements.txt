@@ -1,9 +1,9 @@
 # Streamlit Web Framework
 streamlit>=1.31.0
 
-# OCR Engine
-paddleocr>=2.7.0
-paddlepaddle>=2.5.0
+# OCR Engine（2.x系: Streamlit Cloud無料枠のメモリ制限に対応する軽量モデル使用）
+paddleocr>=2.7.0,<3.0
+paddlepaddle>=2.5.0,<3.0
 
 # Image Processing
 Pillow>=10.2.0
