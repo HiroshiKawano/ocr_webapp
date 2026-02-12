@@ -27,13 +27,17 @@ import streamlit as st
 
 # app.pyはStreamlitのエントリーポイントとして直接実行されるため、
 # 絶対インポートを使用する必要がある（上記のsys.path設定により動作）
-from src.ocr.processor import OCRProcessor, OCRProcessingError
-from src.validators.file_validator import (
-    FileFormatError,
-    FileSizeError,
-    PathTraversalError,
-    ValidationError,
-)
+_IMPORT_ERROR: str | None = None
+try:
+    from src.ocr.processor import OCRProcessor, OCRProcessingError
+    from src.validators.file_validator import (
+        FileFormatError,
+        FileSizeError,
+        PathTraversalError,
+        ValidationError,
+    )
+except Exception as e:
+    _IMPORT_ERROR = f"{type(e).__name__}: {e}"
 
 
 def initialize_session_state() -> None:
@@ -241,6 +245,11 @@ def main() -> None:
         page_icon="",
         layout="centered",
     )
+
+    # インポートエラーがある場合は表示して停止
+    if _IMPORT_ERROR:
+        st.error(f"モジュールの読み込みに失敗しました:\n\n`{_IMPORT_ERROR}`")
+        st.stop()
 
     # セッション状態初期化
     initialize_session_state()
