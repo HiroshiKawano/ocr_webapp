@@ -12,7 +12,8 @@ from pathlib import Path
 
 # PaddlePaddle 3.x の PIR + oneDNN 互換性問題を回避
 # Streamlit Cloud（CPU環境）で ConvertPirAttribute2RuntimeAttribute エラーを防止
-os.environ.setdefault("FLAGS_enable_pir_api", "0")
+os.environ["FLAGS_enable_pir_api"] = "0"
+os.environ["FLAGS_use_mkldnn"] = "0"
 
 # プロジェクトルートをsys.pathに追加（Streamlit Cloud対応）
 project_root = Path(__file__).parent.parent.parent
