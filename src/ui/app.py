@@ -6,6 +6,13 @@ Streamlit を使用した OCR Web アプリケーション。
 
 from __future__ import annotations
 
+import sys
+from pathlib import Path
+
+# プロジェクトルートをsys.pathに追加（Streamlit Cloud対応）
+project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root))
+
 from datetime import datetime
 
 import streamlit as st
