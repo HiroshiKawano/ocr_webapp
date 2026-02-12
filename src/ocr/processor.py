@@ -82,14 +82,16 @@ class OCRProcessor:
         from paddleocr import PaddleOCR
 
         try:
-            # PaddleOCR 3.x（PP-OCRv5）:
-            # - use_textline_orientation=False: テキスト行方向モデルを省略（メモリ節約）
+            # PaddleOCR 3.x（PP-OCRv5 mobile）:
+            # - mobile モデルを明示的に指定（server モデルはStreamlit Cloudでメモリ超過）
+            # - use_textline_orientation=False: テキスト行方向モデルを省略
             # - use_doc_orientation_classify=False: 文書方向分類モデルを無効化
             # - use_doc_unwarping=False: 文書歪み補正モデルを無効化
             # - enable_mkldnn=False: oneDNN無効化（PIR互換性問題を回避）
-            # これにより読み込むモデル数を5→2に削減し、メモリ消費を最小化
-            # （Streamlit Cloud無料枠の~1GBメモリ制限に対応）
+            # これにより読み込むモデル数を5→2に削減し、モデルサイズも大幅縮小
             self._engine = PaddleOCR(
+                text_detection_model_name="PP-OCRv5_mobile_det",
+                text_recognition_model_name="PP-OCRv5_mobile_rec",
                 use_textline_orientation=False,
                 use_doc_orientation_classify=False,
                 use_doc_unwarping=False,
