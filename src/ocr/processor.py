@@ -78,15 +78,18 @@ class OCRProcessor:
         """
         try:
             # PaddleOCR 3.x（PP-OCRv5）: テキスト行方向検出を使用
+            # enable_mkldnn=False: oneDNN無効化（PIR互換性問題を回避）
             self._engine = PaddleOCR(
                 use_textline_orientation=True,
                 lang=lang,
+                enable_mkldnn=False,
             )
         except TypeError:
             # PaddleOCR 2.x: use_textline_orientation 未対応
             self._engine = PaddleOCR(
                 use_angle_cls=True,
                 lang=lang,
+                enable_mkldnn=False,
             )
 
         self._add_padding = add_padding

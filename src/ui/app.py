@@ -6,8 +6,16 @@ Streamlit を使用した OCR Web アプリケーション。
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
+
+# PaddlePaddle 3.x の PIR + oneDNN 互換性問題を回避（Paddle importより前に設定必須）
+os.environ["FLAGS_enable_pir_api"] = "0"
+os.environ["FLAGS_enable_pir_in_executor"] = "0"
+os.environ["FLAGS_pir_apply_inplace_pass"] = "0"
+os.environ["FLAGS_use_mkldnn"] = "0"       # PaddlePaddle 2.x/3.0 系のフラグ名
+os.environ["FLAGS_use_onednn"] = "0"       # PaddlePaddle 3.x 系の新フラグ名
 
 # プロジェクトルートをsys.pathに追加（Streamlit Cloud対応）
 project_root = Path(__file__).parent.parent.parent
