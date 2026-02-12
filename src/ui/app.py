@@ -17,8 +17,9 @@ from datetime import datetime
 
 import streamlit as st
 
-from src.ocr.processor import OCRProcessor, OCRProcessingError
-from src.validators.file_validator import (
+# 相対インポートを使用（Streamlit Cloud互換性のため）
+from ..ocr.processor import OCRProcessor, OCRProcessingError
+from ..validators.file_validator import (
     FileFormatError,
     FileSizeError,
     PathTraversalError,

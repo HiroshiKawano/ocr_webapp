@@ -20,7 +20,8 @@ import numpy as np
 from paddleocr import PaddleOCR
 from PIL import Image, ImageOps
 
-from src.validators import FileValidator, ValidationError
+# 相対インポートを使用（Streamlit Cloud互換性のため）
+from ..validators import FileValidator, ValidationError
 
 logger = logging.getLogger(__name__)
 
